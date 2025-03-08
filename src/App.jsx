@@ -1,13 +1,30 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch, FaSun, FaMoon } from "react-icons/fa";
 import { WiHumidity, WiStrongWind } from "react-icons/wi";
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [weather, setWeather] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+
+  const fetchWeather = async (city) => {
+    try {
+      setError("");
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${import.meta.env.VITE_API_KEY}`
+      );
+      setWeather(response.data);
+    } catch (err) {
+      setError("City not found! Please try again.");
+      setWeather(null);
+    }
+  };
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} p-5 transition-all`}>
@@ -20,7 +37,7 @@ const App = () => {
       </header>
       
       {/* Search Bar */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 ">
         <input
           type="text"
           placeholder="Enter city name (e.g., Dhaka)"
