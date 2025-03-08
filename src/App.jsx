@@ -2,15 +2,21 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FaSearch, FaSun, FaMoon } from 'react-icons/fa';
 import { WiHumidity, WiStrongWind } from 'react-icons/wi';
-import {BsCloudSun, BsCloudRain, BsCloudSnow, BsSun, BsCloud} from 'react-icons/bs'
+import {
+  BsCloudSun,
+  BsCloudRain,
+  BsCloudSnow,
+  BsSun,
+  BsCloud,
+} from 'react-icons/bs';
 
 const weatherIcon = {
-  Clear: < BsSun className='text-yellow-500 text-4xl'/>,
-  Clouds: < BsCloud className='text-gray-400 text-4xl'/>,
-  Rain: < BsCloudRain className='text-blue-500 text-4xl'/>,
-  Snow: < BsCloudSnow className='text-white text-4xl'/>,
-  default: < BsCloudSun className='text-gray-400 text-4xl'/>
-}
+  Clear: <BsSun className="text-yellow-500 text-4xl" />,
+  Clouds: <BsCloud className="text-gray-400 text-4xl" />,
+  Rain: <BsCloudRain className="text-blue-500 text-4xl" />,
+  Snow: <BsCloudSnow className="text-white text-4xl" />,
+  default: <BsCloudSun className="text-gray-400 text-4xl" />,
+};
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(
@@ -18,6 +24,7 @@ const App = () => {
   );
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
+  const [forecast, setForecast] = useState([]);
   const inputRef = useRef();
 
   useEffect(() => {
@@ -31,18 +38,41 @@ const App = () => {
           import.meta.env.VITE_API_KEY
         }`
       );
+
+      const ForecastResponse = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${
+          import.meta.env.VITE_API_KEY
+        }`
+      );
+
+      console.log('forecast data:', ForecastResponse.data.list);
+      if(!ForecastResponse.data ||  !ForecastResponse.data.list){
+        throw new Error('Invalid forecast data')
+      }
+
       setWeather(response.data);
+      setForecast(ForecastResponse.data.list.slice(0, 5))
+
+      setError(null);
       console.log(response.data);
-      setError(null);
-    } catch (err) {
+    } catch (error) {
       setWeather(null);
-      setError(null);
+      setForecast([])
+      setError('City not found');
+      console.error(error);
     }
   };
 
   useEffect(() => {
     fetchWeather('london');
   }, []);
+
+  const implementIcon = (weatherCondition) => {
+    if (weatherCondition in weatherIcon) {
+      return weatherIcon[weatherCondition];
+    }
+    return weatherIcon.default;
+  };
 
   return (
     <div
@@ -85,7 +115,12 @@ const App = () => {
       ) : weather ? (
         <div className="mt-8 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md max-w-lg mx-auto">
           <h2 className="text-xl font-semibold capitalize">{weather.name}</h2>
-          <div className="text-5xl font-bold mt-2">{Math.round(weather.main?.temp)}°C</div>
+          <div className="text-5xl font-bold mt-2">
+            {Math.round(weather.main?.temp)}°C
+          </div>
+          <p className="text-lg text-gray-500">
+            {implementIcon(weather.weather[0]?.main)}
+          </p>
           <p className="text-lg text-gray-500">
             {weather.weather[0]?.description}
           </p>
@@ -109,17 +144,23 @@ const App = () => {
       )}
 
       {/* Forecast Section */}
+      <div>
+      <h1 className='capitalize font-bold text-xl my-5'>hourly forecast</h1>
       <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[...Array(5)].map((_, index) => (
+        {forecast.map((hour, index) => (
           <div
             key={index}
             className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md"
           >
-            <p className="text-lg font-medium">Day {index + 1}</p>
-            <div className="text-2xl font-bold">22°C</div>
-            <p className="text-gray-500">Cloudy</p>
+            <p className="text-lg font-medium">{new Date(hour.dt * 1000).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute:'2-digit'
+            })}</p>
+            <div className="text-2xl font-bold">{Math.round(hour.main.temp)}°C</div>
+            <p className="text-gray-500">{implementIcon(hour.weather[0]?.main)}</p>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );
