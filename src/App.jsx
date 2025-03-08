@@ -2,6 +2,15 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FaSearch, FaSun, FaMoon } from 'react-icons/fa';
 import { WiHumidity, WiStrongWind } from 'react-icons/wi';
+import {BsCloudSun, BsCloudRain, BsCloudSnow, BsSun, BsCloud} from 'react-icons/bs'
+
+const weatherIcon = {
+  Clear: < BsSun className='text-yellow-500 text-4xl'/>,
+  Clouds: < BsCloud className='text-gray-400 text-4xl'/>,
+  Rain: < BsCloudRain className='text-blue-500 text-4xl'/>,
+  Snow: < BsCloudSnow className='text-white text-4xl'/>,
+  default: < BsCloudSun className='text-gray-400 text-4xl'/>
+}
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(
@@ -76,7 +85,7 @@ const App = () => {
       ) : weather ? (
         <div className="mt-8 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md max-w-lg mx-auto">
           <h2 className="text-xl font-semibold capitalize">{weather.name}</h2>
-          <div className="text-5xl font-bold mt-2">{weather.main?.temp}°C</div>
+          <div className="text-5xl font-bold mt-2">{Math.round(weather.main?.temp)}°C</div>
           <p className="text-lg text-gray-500">
             {weather.weather[0]?.description}
           </p>
