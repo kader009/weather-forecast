@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaSearch, FaSun, FaMoon } from 'react-icons/fa';
 import { WiHumidity, WiStrongWind } from 'react-icons/wi';
 
@@ -9,6 +9,7 @@ const App = () => {
   );
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
+  const inputRef = useRef();
 
   useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
@@ -31,7 +32,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetchWeather('Dhaka');
+    fetchWeather('london');
   }, []);
 
   return (
@@ -55,11 +56,15 @@ const App = () => {
       {/* Search Bar */}
       <div className="flex justify-center mt-4 ">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Enter city name (e.g., Dhaka)"
           className="p-2 w-3/4 md:w-1/2 border rounded-l-lg focus:outline-none"
         />
-        <button className="bg-blue-500 text-white p-2 rounded-r-lg">
+        <button
+          onClick={() => fetchWeather(inputRef.current.value)}
+          className="bg-blue-500 text-white p-2 rounded-r-lg"
+        >
           <FaSearch />
         </button>
       </div>
@@ -70,7 +75,7 @@ const App = () => {
         <div>error</div>
       ) : weather ? (
         <div className="mt-8 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md max-w-lg mx-auto">
-          <h2 className="text-xl font-semibold">{weather.name}</h2>
+          <h2 className="text-xl font-semibold capitalize">{weather.name}</h2>
           <div className="text-5xl font-bold mt-2">{weather.main?.temp}°C</div>
           <p className="text-lg text-gray-500">
             {weather.weather[0]?.description}
@@ -85,7 +90,13 @@ const App = () => {
           </div>
         </div>
       ) : (
-        <div>loading weather data</div>
+        <div className="flex justify-center items-center h-64">
+          <div className="relative">
+            <div className="w-16 h-16 border-8 border-dashed border-blue-500 rounded-full animate-spin border-t-transparent"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 border-8 border-dashed border-green-500 rounded-full animate-spin border-t-transparent"></div>
+          </div>
+          <p className="text-xl mt-4">Loading...</p>
+        </div>
       )}
 
       {/* Forecast Section */}
