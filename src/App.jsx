@@ -19,7 +19,7 @@ const App = () => {
       <div className="flex justify-center mt-4">
         <input
           type="text"
-          placeholder="Enter city name..."
+          placeholder="Enter city name (e.g., Dhaka)"
           className="p-2 w-3/4 md:w-1/2 border rounded-l-lg focus:outline-none"
         />
         <button className="bg-blue-500 text-white p-2 rounded-r-lg">
