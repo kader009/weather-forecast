@@ -10,6 +10,7 @@ import {
   BsCloud,
 } from 'react-icons/bs';
 
+// define weather icon based on weather condition
 const weatherIcon = {
   Clear: <BsSun className="text-yellow-500 text-4xl" />,
   Clouds: <BsCloud className="text-gray-400 text-4xl" />,
@@ -21,52 +22,63 @@ const weatherIcon = {
 const App = () => {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('theme') === 'dark'
-  );
-  const [weather, setWeather] = useState(null);
-  const [error, setError] = useState(null);
-  const [forecast, setForecast] = useState([]);
-  const inputRef = useRef();
+  ); // dark mode state from local storage
+  const [weather, setWeather] = useState(null); // current weather data
+  const [error, setError] = useState(null); // Error message
+  const [forecast, setForecast] = useState([]); // hourly forecast data
+  const inputRef = useRef(); // reference to city input field
 
+  // persist dark mode to local storage
   useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
+  // fetching weather data from openweathermap
   const fetchWeather = async (city) => {
     try {
+    // fetch current weather data
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${
           import.meta.env.VITE_API_KEY
         }`
       );
 
+    // fetch hourly forecast 
       const ForecastResponse = await axios.get(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${
           import.meta.env.VITE_API_KEY
         }`
       );
 
-      console.log('forecast data:', ForecastResponse.data.list);
-      if(!ForecastResponse.data ||  !ForecastResponse.data.list){
-        throw new Error('Invalid forecast data')
+      console.log('forecast data:', ForecastResponse.data.list); // logging for bebugging
+
+      if (!ForecastResponse.data || !ForecastResponse.data.list) {
+        throw new Error('Invalid forecast data');
       }
 
+      // update state with fetch data
       setWeather(response.data);
-      setForecast(ForecastResponse.data.list.slice(0, 5))
 
-      setError(null);
+      // get first 5 hour
+      setForecast(ForecastResponse.data.list.slice(0, 5));
+
+      setError(null); // clear previous error
       console.log(response.data);
     } catch (error) {
+      // handle error during api call
       setWeather(null);
-      setForecast([])
-      setError('City not found');
+      setForecast([]);
+      setError(error.message || 'Failed to fetch weather data!');
       console.error(error);
     }
   };
 
+  // fetch weather data on inial load (default city : london)
   useEffect(() => {
     fetchWeather('london');
   }, []);
 
+  // return the appropiate weather icon based on weather condition
   const implementIcon = (weatherCondition) => {
     if (weatherCondition in weatherIcon) {
       return weatherIcon[weatherCondition];
@@ -111,10 +123,14 @@ const App = () => {
       {/* Current Weather Section */}
 
       {error ? (
-        <div>error</div>
+        <div className="text-red-500 text-center font-bold">
+          Error! <strong>{error}</strong>
+        </div>
       ) : weather ? (
         <div className="mt-8 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md max-w-lg mx-auto">
-          <h2 className="text-xl font-semibold capitalize dark:bg-gray-900 text-black">{weather.name}</h2>
+          <h2 className="text-xl font-semibold capitalize dark:bg-gray-900 text-black">
+            {weather.name}
+          </h2>
           <div className="text-5xl font-bold mt-2 dark:bg-gray-900 text-black">
             {Math.round(weather.main?.temp)}°C
           </div>
@@ -126,10 +142,12 @@ const App = () => {
           </p>
           <div className="flex justify-between mt-4 text-lg">
             <div className="flex items-center text-black dark:bg-gray-900">
-              <WiHumidity className="mr-1 text-3xl" /> {weather?.main?.humidity}%
+              <WiHumidity className="mr-1 text-3xl" /> {weather?.main?.humidity}
+              %
             </div>
             <div className="flex items-center dark:bg-gray-900 text-black">
-              <WiStrongWind className="mr-1 text-3xl" /> {weather?.wind?.speed} km/h
+              <WiStrongWind className="mr-1 text-3xl" /> {weather?.wind?.speed}{' '}
+              km/h
             </div>
           </div>
         </div>
@@ -145,22 +163,28 @@ const App = () => {
 
       {/* Forecast Section */}
       <div>
-      <h1 className='capitalize font-bold text-xl my-5'>hourly forecast</h1>
-      <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
-        {forecast.map((hour, index) => (
-          <div
-            key={index}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
-          >
-            <p className="text-lg font-medium dark:bg-gray-900 text-black">{new Date(hour.dt * 1000).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute:'2-digit'
-            })}</p>
-            <div className="text-2xl font-bold dark:bg-gray-900 text-black">{Math.round(hour.main.temp)}°C</div>
-            <p className="text-gray-500">{implementIcon(hour.weather[0]?.main)}</p>
-          </div>
-        ))}
-      </div>
+        <h1 className="capitalize font-bold text-xl my-5">hourly forecast</h1>
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+          {forecast.map((hour, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+            >
+              <p className="text-lg font-medium dark:bg-gray-900 text-black">
+                {new Date(hour.dt * 1000).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </p>
+              <div className="text-2xl font-bold dark:bg-gray-900 text-black">
+                {Math.round(hour.main.temp)}°C
+              </div>
+              <p className="text-gray-500">
+                {implementIcon(hour.weather[0]?.main)}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
