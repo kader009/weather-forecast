@@ -36,6 +36,7 @@ const App = () => {
   // fetching weather data from openweathermap
   const fetchWeather = async (city) => {
     try {
+      
     // fetch current weather data
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${
@@ -120,7 +121,7 @@ const App = () => {
         </button>
       </div>
 
-      {/* Current Weather Section */}
+      {/* Current Weather Section and show data */}
 
       {error ? (
         <div className="text-red-500 text-center font-bold">
@@ -161,7 +162,7 @@ const App = () => {
         </div>
       )}
 
-      {/* Forecast Section */}
+      {/* Forecast hourly Section */}
       <div>
         <h1 className="capitalize font-bold text-xl my-5">hourly forecast</h1>
         <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
