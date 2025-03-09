@@ -98,7 +98,7 @@ const App = () => {
           ref={inputRef}
           type="text"
           placeholder="Enter city name (e.g., Dhaka)"
-          className="p-2 w-3/4 md:w-1/2 border-2 border-gray-300 rounded-l-lg focus:outline-none"
+          className="p-2 w-3/4 md:w-1/2 border-2 border-gray-300 rounded-l-lg focus:outline-none placeholder-gray-500 dakr:placeholder-gray-300 bg-white dark:bg-black text-black dark:text-white"
         />
         <button
           onClick={() => fetchWeather(inputRef.current.value)}
@@ -114,21 +114,21 @@ const App = () => {
         <div>error</div>
       ) : weather ? (
         <div className="mt-8 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md max-w-lg mx-auto">
-          <h2 className="text-xl font-semibold capitalize">{weather.name}</h2>
-          <div className="text-5xl font-bold mt-2">
+          <h2 className="text-xl font-semibold capitalize dark:bg-gray-900 text-black">{weather.name}</h2>
+          <div className="text-5xl font-bold mt-2 dark:bg-gray-900 text-black">
             {Math.round(weather.main?.temp)}°C
           </div>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-black dark:bg-gray-900">
             {implementIcon(weather.weather[0]?.main)}
           </p>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-black dark:bg-gray-900 font-semibold">
             {weather.weather[0]?.description}
           </p>
           <div className="flex justify-between mt-4 text-lg">
-            <div className="flex items-center">
+            <div className="flex items-center text-black dark:bg-gray-900">
               <WiHumidity className="mr-1" /> {weather?.main?.humidity}%
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center dark:bg-gray-900 text-black">
               <WiStrongWind className="mr-1" /> {weather?.wind?.speed} km/h
             </div>
           </div>
@@ -152,11 +152,11 @@ const App = () => {
             key={index}
             className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
           >
-            <p className="text-lg font-medium">{new Date(hour.dt * 1000).toLocaleTimeString([], {
+            <p className="text-lg font-medium dark:bg-gray-900 text-black">{new Date(hour.dt * 1000).toLocaleTimeString([], {
               hour: '2-digit',
               minute:'2-digit'
             })}</p>
-            <div className="text-2xl font-bold">{Math.round(hour.main.temp)}°C</div>
+            <div className="text-2xl font-bold dark:bg-gray-900 text-black">{Math.round(hour.main.temp)}°C</div>
             <p className="text-gray-500">{implementIcon(hour.weather[0]?.main)}</p>
           </div>
         ))}
