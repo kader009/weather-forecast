@@ -118,7 +118,7 @@ const App = () => {
           <div className="text-5xl font-bold mt-2 dark:bg-gray-900 text-black">
             {Math.round(weather.main?.temp)}°C
           </div>
-          <p className="text-lg text-black dark:bg-gray-900">
+          <p className="text-lg text-black dark:bg-gray-900 my-3">
             {implementIcon(weather.weather[0]?.main)}
           </p>
           <p className="text-lg text-black dark:bg-gray-900 font-semibold">
@@ -126,10 +126,10 @@ const App = () => {
           </p>
           <div className="flex justify-between mt-4 text-lg">
             <div className="flex items-center text-black dark:bg-gray-900">
-              <WiHumidity className="mr-1" /> {weather?.main?.humidity}%
+              <WiHumidity className="mr-1 text-3xl" /> {weather?.main?.humidity}%
             </div>
             <div className="flex items-center dark:bg-gray-900 text-black">
-              <WiStrongWind className="mr-1" /> {weather?.wind?.speed} km/h
+              <WiStrongWind className="mr-1 text-3xl" /> {weather?.wind?.speed} km/h
             </div>
           </div>
         </div>
