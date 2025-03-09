@@ -98,11 +98,11 @@ const App = () => {
           ref={inputRef}
           type="text"
           placeholder="Enter city name (e.g., Dhaka)"
-          className="p-2 w-3/4 md:w-1/2 border rounded-l-lg focus:outline-none"
+          className="p-2 w-3/4 md:w-1/2 border-2 border-gray-300 rounded-l-lg focus:outline-none"
         />
         <button
           onClick={() => fetchWeather(inputRef.current.value)}
-          className="bg-blue-500 text-white p-2 rounded-r-lg"
+          className="bg-blue-500 text-white p-2 rounded-r-lg transition-all"
         >
           <FaSearch />
         </button>
@@ -150,7 +150,7 @@ const App = () => {
         {forecast.map((hour, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md"
+            className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
           >
             <p className="text-lg font-medium">{new Date(hour.dt * 1000).toLocaleTimeString([], {
               hour: '2-digit',
