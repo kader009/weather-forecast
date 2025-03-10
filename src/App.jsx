@@ -183,6 +183,9 @@ const App = () => {
               <p className="text-gray-500">
                 {implementIcon(hour.weather[0]?.main)}
               </p>
+              <p className="text-black font-bold">
+              {weather.weather[0]?.description}
+              </p>
             </div>
           ))}
         </div>
