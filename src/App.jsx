@@ -69,7 +69,11 @@ const App = () => {
       // handle error during api call
       setWeather(null);
       setForecast([]);
-      setError(error.message || 'Failed to fetch weather data!');
+      if (error.response && error.response.status === 404) {
+        setError('City not found! Please enter a valid city name.');
+      } else {
+        setError('Failed to fetch weather data! Try again later.');
+      }
       console.error(error);
     }
   };
